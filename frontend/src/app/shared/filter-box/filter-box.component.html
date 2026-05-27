@@ -1,0 +1,13 @@
+
+<ng-container *ngIf="show">
+  <div class="filter-box">
+
+    <div class="filter-body">
+      <ng-content></ng-content>
+    </div>
+    <div class="filter-footer">
+      <button class="wayne-button default" (click)="_cancel()">{{'BUTTON.CANCEL' | translate}}</button>
+      <button class="wayne-button primary" (click)="_confirm()">{{'BUTTON.CONFIRM' | translate}}</button>
+    </div>
+  </div>
+</ng-container>

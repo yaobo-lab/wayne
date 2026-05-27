@@ -1,0 +1,37 @@
+<header style="background-color: #1D2143" class="header">
+  <div class="branding" style="min-width: auto">
+    <a routerLink="/portal/namespace/{{cacheService.currentNamespace?.id}}/app" class="nav-link">
+      <span class="title">{{getTitle()}}</span>
+    </a>
+  </div>
+
+  <div class="header-actions">
+    <wayne-dropdown [size]="authService.currentUser?.namespaces.length > 20 ? 'middle' : 'small'">
+      <clr-icon shape="organization" style="margin-right: 5px"></clr-icon>
+      {{cacheService.currentNamespace?.name}}
+      <clr-icon shape="caret down" size="12" style="margin-left: 5px;"></clr-icon>
+      <wayne-dropdown-item [title]="authService.currentUser?.namespaces.length > 20 ? '部门' : ''">
+        <span style="white-space: nowrap;" *ngFor="let n of authService.currentUser?.namespaces"
+              (click)='switchNamespace(n)'>{{n.name}}</span>
+      </wayne-dropdown-item>
+    </wayne-dropdown>
+    <wayne-dropdown size="small" last>
+      <clr-icon shape="user" style="margin-right: 5px"></clr-icon>
+      {{authService.currentUser?.display}}
+      <clr-icon shape="caret down" size="12" style="margin-left: 5px;"></clr-icon>
+      <wayne-dropdown-item>
+        <span (click)="goBack()" *ngIf="authService.currentUser.admin">{{'ACCOUNT.GO_BACK' | translate}}</span>
+        <span (click)="logout()">{{'ACCOUNT.LOGOUT' | translate}}</span>
+      </wayne-dropdown-item>
+    </wayne-dropdown>
+  </div>
+</header>
+
+<clr-modal [(clrModalOpen)]="notificationModal" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <a class="modal-title"><span class="label label-info">{{notification.type}}</span> {{notification.title}}</a>
+  <div class="modal-body">
+    <markdown [data]="notification.message"></markdown>
+  </div>
+
+</clr-modal>
+

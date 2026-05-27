@@ -1,0 +1,25 @@
+<div class="content-area" style="position: relative">
+  <create-edit-apikey (create)="createApiKey($event)"></create-edit-apikey>
+  <div style="padding: 15px;">
+    <div class="clr-row">
+      <div class="clr-col-lg-12 clr-col-md-12 clr-col-sm-12 clr-col-xs-12">
+        <div class="clr-row flex-items-xs-between flex-items-xs-top" style="padding-left: 15px; padding-right: 15px;">
+
+        </div>
+        <div class="table-search">
+          <div class="table-search-left">
+            <button class="wayne-button normal"
+                    *ngIf="authService.currentNamespacePermission.apiKey.create || authService.currentUser.admin"
+                    (click)="openModal()">
+              {{'ACTION.CREATE' | translate}} APIKey
+            </button>
+          </div>
+        </div>
+        <list-apikey [apiKeys]="changedApiKeys" (delete)="deleteApiKey($event)" (edit)="editApiKey($event)"
+                     (paginate)="retrieve($event)"
+                     [page]="pageState.page" [showState]="showState"></list-apikey>
+      </div>
+    </div>
+  </div>
+</div>
+<wayne-sidenav-namespace style="display: flex; order: -1"></wayne-sidenav-namespace>
