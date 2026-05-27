@@ -26,7 +26,7 @@ Wayne 是基于 [Qihoo360/wayne](https://github.com/Qihoo360/wayne) 维护升级
 
 ### Architecture
 
-![Architecture](docs/4.png)
+![Architecture](docs/architecture.png)
 
 ## 技术栈
 
