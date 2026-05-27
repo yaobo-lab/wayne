@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-platform-api
+  labels:
+    wayne-app: devops-platform
+    wayne-ns: public-service
+    app: devops-platform-api
+  annotations:
+    configuration.konghq.com: strip-config
+    plugins.konghq.com: oidc-token-svc-devops-api
+spec:
+  tls: []
+  rules:
+    - host: gw.yourdomain.com
+      http:
+        paths:
+          - path: /devopsapi
+            backend:
+              service:
+                name: devops-platform-api
+                port:
+                  number: 80
+            pathType: Prefix

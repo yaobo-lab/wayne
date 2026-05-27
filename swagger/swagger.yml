@@ -1,0 +1,6650 @@
+swagger: "2.0"
+info:
+  title: Wayne API
+  description: List接口查询技巧：<br> 1.按照字段排序：增加sortby查询参数。例如：sortby=-id ，负号表示倒叙排序，不加负号表示默认排序
+    <br> 2.按照字段查询：增加filter查询参数。例如：filter=name__exact=test 表示name名称等于test， filter=name__contains=test表示名称包含test
+  version: 1.0.0
+basePath: /api/v1
+paths:
+  /apps/{appid}/_proxy/clusters/{cluster}/{kind}/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: List Objects
+      operationId: KubeProxyController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: filter
+        description: the labelSelector for list e.g. filter=app=infra-wayne,wayne-app=infra
+        type: string
+      - in: query
+        name: labelSelector
+        description: labelSelector, ex. labelSelector=name=test
+        type: string
+      - in: query
+        name: sortby
+        description: column sorted by, ex. sortby=-id, '-' representation desc, and
+          sortby=id representation asc
+        type: string
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/success'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Create the resource
+      operationId: KubeProxyController.Create
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      - in: body
+        name: resource
+        description: the kubernetes resource
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/{kind}/{name}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Find Object by name
+      operationId: KubeProxyController.Get
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/success'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Update the resource
+      operationId: KubeProxyController.Update
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      - in: body
+        name: resource
+        description: the kubernetes resource
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: delete the resource
+      operationId: KubeProxyController.Delete
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster want to delete
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace want to delete
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the name want to delete
+        required: true
+        type: string
+      - in: query
+        name: force
+        description: force to delete the resource from etcd.
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/{kind}/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: get all names
+      operationId: KubeProxyController.Get all resource names
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/response.NamesObject'
+  /apps/{appid}/_proxy/clusters/{cluster}/apis/{group}/{version}/{kind}/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: find CRD by cluster
+      operationId: KubeCustomCRDController.List CRD
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    post:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: create CustomResourceDefinition
+      operationId: KubeCustomCRDController.Create
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+  /apps/{appid}/_proxy/clusters/{cluster}/apis/{group}/{version}/{kind}/{name}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: find CRD by cluster
+      operationId: KubeCustomCRDController.get CRD
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    put:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: update the CustomResourceDefinition
+      operationId: KubeCustomCRDController.Update
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: delete the CustomResourceDefinition
+      operationId: KubeCustomCRDController.Delete
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/apis/{group}/{version}/namespaces/{namespace}/{kind}/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: find CRD by cluster
+      operationId: KubeCustomCRDController.List CRD
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    post:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: create CustomResourceDefinition
+      operationId: KubeCustomCRDController.Create
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+  /apps/{appid}/_proxy/clusters/{cluster}/apis/{group}/{version}/namespaces/{namespace}/{kind}/{name}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: find CRD by cluster
+      operationId: KubeCustomCRDController.get CRD
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    put:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: update the CustomResourceDefinition
+      operationId: KubeCustomCRDController.Update
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/apis/:group/:version/:kind
+      description: delete the CustomResourceDefinition
+      operationId: KubeCustomCRDController.Delete
+      parameters:
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/customresourcedefinitions/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/customresourcedefinitions
+      description: find CRD by cluster
+      operationId: KubeCRDController.List CRD
+    post:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/customresourcedefinitions
+      description: create CustomResourceDefinition
+      operationId: KubeCRDController.Create
+  /apps/{appid}/_proxy/clusters/{cluster}/customresourcedefinitions/{name}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/customresourcedefinitions
+      description: find CRD by cluster
+      operationId: KubeCRDController.get CRD
+    put:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/customresourcedefinitions
+      description: update the CustomResourceDefinition
+      operationId: KubeCRDController.Update
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/customresourcedefinitions
+      description: delete the CustomResourceDefinition
+      operationId: KubeCRDController.Delete
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/namespaces/{namespace}/{kind}/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: List Objects
+      operationId: KubeProxyController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: filter
+        description: the labelSelector for list e.g. filter=app=infra-wayne,wayne-app=infra
+        type: string
+      - in: query
+        name: labelSelector
+        description: labelSelector, ex. labelSelector=name=test
+        type: string
+      - in: query
+        name: sortby
+        description: column sorted by, ex. sortby=-id, '-' representation desc, and
+          sortby=id representation asc
+        type: string
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/success'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Create the resource
+      operationId: KubeProxyController.Create
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      - in: body
+        name: resource
+        description: the kubernetes resource
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/namespaces/{namespace}/{kind}/{name}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Find Object by name
+      operationId: KubeProxyController.Get
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/success'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: Update the resource
+      operationId: KubeProxyController.Update
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the resource name
+        required: true
+        type: string
+      - in: body
+        name: resource
+        description: the kubernetes resource
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: delete the resource
+      operationId: KubeProxyController.Delete
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster want to delete
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace want to delete
+        required: true
+        type: string
+      - in: path
+        name: name
+        description: the name want to delete
+        required: true
+        type: string
+      - in: query
+        name: force
+        description: force to delete the resource from etcd.
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/_proxy/clusters/{cluster}/namespaces/{namespace}/{kind}/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/_proxy/clusters/:cluster/:kind
+      description: get all names
+      operationId: KubeProxyController.Get all resource names
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      - in: path
+        name: kind
+        description: the resource kind
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/response.NamesObject'
+  /apps/{appid}/apikeys/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: get all
+      operationId: ApiKeyController.List/
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted, default list all.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.APIKey'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: create APIKey
+      operationId: ApiKeyController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The APIKey content
+        required: true
+        schema:
+          $ref: '#/definitions/model.APIKey'
+      responses:
+        "200":
+          description: return model.APIKey success
+  /apps/{appid}/apikeys/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: find Object by id
+      operationId: ApiKeyController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.APIKey'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: update the App
+      operationId: ApiKeyController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.APIKey'
+      responses:
+        "200":
+          description: model.APIKey success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: delete the APIKey
+      operationId: ApiKeyController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/configmaps/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: get all ConfigMap
+      operationId: ConfigMapController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.ConfigMap'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: create ConfigMap
+      operationId: ConfigMapController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The ConfigMap content
+        required: true
+        schema:
+          $ref: '#/definitions/model.ConfigMap'
+      responses:
+        "200":
+          description: return model.ConfigMap success
+  /apps/{appid}/configmaps/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: find Object by id
+      operationId: ConfigMapController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.ConfigMap'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: update the ConfigMap
+      operationId: ConfigMapController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ConfigMap'
+      responses:
+        "200":
+          description: model.ConfigMap success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: delete the ConfigMap
+      operationId: ConfigMapController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/configmaps/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: get all id and names
+      operationId: ConfigMapController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.ConfigMap'
+  /apps/{appid}/configmaps/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/configmaps/tpls
+      description: get all ConfigMapTemplate
+      operationId: ConfigMapTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.ConfigMapTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/configmaps/tpls
+      description: create ConfigMapTemplate
+      operationId: ConfigMapTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The ConfigMapTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.ConfigMapTemplate'
+      responses:
+        "200":
+          description: return model.ConfigMapTemplate success
+  /apps/{appid}/configmaps/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/configmaps/tpls
+      description: find Object by id
+      operationId: ConfigMapTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.ConfigMapTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/configmaps/tpls
+      description: update the ConfigMapTemplate
+      operationId: ConfigMapTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ConfigMapTemplate'
+      responses:
+        "200":
+          description: model.ConfigMapTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/configmaps/tpls
+      description: delete the ConfigMapTemplate
+      operationId: ConfigMapTplController.Delete
+      parameters:
+      - in: path
+        name: tplId
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/configmaps/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/configmaps
+      description: batch update the Orders
+      operationId: ConfigMapController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.ConfigMap'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/cronjobs/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: get all Cronjob
+      operationId: CronjobController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Cronjob'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: create Cronjob
+      operationId: CronjobController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The Cronjob content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Cronjob'
+      responses:
+        "200":
+          description: return model.Cronjob success
+  /apps/{appid}/cronjobs/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: find Object by id
+      operationId: CronjobController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Cronjob'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: update the Cronjob
+      operationId: CronjobController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Cronjob'
+      responses:
+        "200":
+          description: model.Cronjob success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: delete the Cronjob
+      operationId: CronjobController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/cronjobs/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: get all id and names
+      operationId: CronjobController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Cronjob'
+  /apps/{appid}/cronjobs/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs/tpls
+      description: get all CronjobTemplate
+      operationId: CronjobTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.CronjobTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs/tpls
+      description: create CronjobTemplate
+      operationId: CronjobTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The CronjobTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.CronjobTemplate'
+      responses:
+        "200":
+          description: return model.CronjobTemplate success
+  /apps/{appid}/cronjobs/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs/tpls
+      description: find Object by id
+      operationId: CronjobTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.CronjobTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs/tpls
+      description: update the CronjobTemplate
+      operationId: CronjobTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.CronjobTemplate'
+      responses:
+        "200":
+          description: model.CronjobTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs/tpls
+      description: delete the CronjobTemplate
+      operationId: CronjobTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/cronjobs/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/cronjobs
+      description: batch update the Orders
+      operationId: CronjobController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.Cronjob'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/daemonsets/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: get all DaemonSet
+      operationId: DaemonSetController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.DaemonSet'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: create DaemonSet
+      operationId: DaemonSetController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The DaemonSet content
+        required: true
+        schema:
+          $ref: '#/definitions/model.DaemonSet'
+      responses:
+        "200":
+          description: return model.DaemonSet success
+  /apps/{appid}/daemonsets/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: find Object by id
+      operationId: DaemonSetController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.DaemonSet'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: update the DaemonSet
+      operationId: DaemonSetController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.DaemonSet'
+      responses:
+        "200":
+          description: model.DaemonSet success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: delete the DaemonSet
+      operationId: DaemonSetController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/daemonsets/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: get all id and names
+      operationId: DaemonSetController.List/
+      parameters:
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.DaemonSet'
+  /apps/{appid}/daemonsets/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets/tpls
+      description: get all DaemonSetTemplate
+      operationId: DaemonSetTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: daemonSetId
+        description: daemonSet id
+        type: integer
+        format: int64
+      - in: query
+        name: isOnline
+        description: only show online tpls,default false
+        type: boolean
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.DaemonSetTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets/tpls
+      description: create DaemonSetTemplate
+      operationId: DaemonSetTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The DaemonSetTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.DaemonSetTemplate'
+      responses:
+        "200":
+          description: return model.DaemonSetTemplate success
+  /apps/{appid}/daemonsets/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets/tpls
+      description: find Object by id
+      operationId: DaemonSetTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.DaemonSetTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets/tpls
+      description: update the DaemonSetTemplate
+      operationId: DaemonSetTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.DaemonSetTemplate'
+      responses:
+        "200":
+          description: model.DaemonSetTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets/tpls
+      description: delete the DaemonSetTemplate
+      operationId: DaemonSetTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/daemonsets/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/daemonsets
+      description: batch update the Orders
+      operationId: DaemonSetController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.DaemonSet'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/deployments/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: get all Deployment
+      operationId: DeploymentController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Deployment'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: create Deployment
+      operationId: DeploymentController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The Deployment content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Deployment'
+      responses:
+        "200":
+          description: return model.Deployment success
+  /apps/{appid}/deployments/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: find Object by id
+      operationId: DeploymentController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Deployment'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: update the Deployment
+      operationId: DeploymentController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Deployment'
+      responses:
+        "200":
+          description: model.Deployment success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: delete the Deployment
+      operationId: DeploymentController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/deployments/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: get all id and names
+      operationId: DeploymentController.List/
+      parameters:
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Deployment'
+  /apps/{appid}/deployments/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/deployments/tpls
+      description: get all DeploymentTemplate
+      operationId: DeploymentTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deploymentId
+        description: deployment id
+        type: integer
+        format: int64
+      - in: query
+        name: isOnline
+        description: only show online tpls,default false
+        type: boolean
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.DeploymentTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/deployments/tpls
+      description: create DeploymentTemplate
+      operationId: DeploymentTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The DeploymentTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.DeploymentTemplate'
+      responses:
+        "200":
+          description: return model.DeploymentTemplate success
+  /apps/{appid}/deployments/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/deployments/tpls
+      description: find Object by id
+      operationId: DeploymentTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.DeploymentTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/deployments/tpls
+      description: update the DeploymentTemplate
+      operationId: DeploymentTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.DeploymentTemplate'
+      responses:
+        "200":
+          description: model.DeploymentTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/deployments/tpls
+      description: delete the DeploymentTemplate
+      operationId: DeploymentTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/deployments/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/deployments
+      description: batch update the Orders
+      operationId: DeploymentController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.Deployment'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/hpas/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+    post:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+  /apps/{appid}/hpas/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+    put:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+  /apps/{appid}/hpas/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+  /apps/{appid}/hpas/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/hpas/tpls
+    post:
+      tags:
+      - apps/:appid([0-9]+)/hpas/tpls
+  /apps/{appid}/hpas/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/hpas/tpls
+    put:
+      tags:
+      - apps/:appid([0-9]+)/hpas/tpls
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/hpas/tpls
+  /apps/{appid}/hpas/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/hpas
+  /apps/{appid}/ingresses/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+    post:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+  /apps/{appid}/ingresses/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+    put:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+  /apps/{appid}/ingresses/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+  /apps/{appid}/ingresses/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/ingresses/tpls
+      description: get all ingressTpl
+      operationId: IngressTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.ingressTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/ingresses/tpls
+      description: create ingressTpl
+      operationId: IngressTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The ingressTpl content
+        required: true
+        schema:
+          $ref: '#/definitions/model.ingressTemplate'
+      responses:
+        "200":
+          description: return model.ingressTemplate success
+  /apps/{appid}/ingresses/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/ingresses/tpls
+      description: find Object by id
+      operationId: IngressTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.ingressTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/ingresses/tpls
+      description: update the ingrTpl
+      operationId: IngressTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ingrTemplate'
+      responses:
+        "200":
+          description: model.ingrTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/ingresses/tpls
+      description: delete the ingressTpl
+      operationId: IngressTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/ingresses/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/ingresses
+  /apps/{appid}/persistentvolumeclaims/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: get all PersistentVolumeClaim
+      operationId: PersistentVolumeClaimController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.PersistentVolumeClaim'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: create PersistentVolumeClaim
+      operationId: PersistentVolumeClaimController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The PersistentVolumeClaim content
+        required: true
+        schema:
+          $ref: '#/definitions/model.PersistentVolumeClaim'
+      responses:
+        "200":
+          description: return model.PersistentVolumeClaim success
+  /apps/{appid}/persistentvolumeclaims/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: find Object by id
+      operationId: PersistentVolumeClaimController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.PersistentVolumeClaim'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: update the PersistentVolumeClaim
+      operationId: PersistentVolumeClaimController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.PersistentVolumeClaim'
+      responses:
+        "200":
+          description: model.PersistentVolumeClaim success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: delete the PersistentVolumeClaim
+      operationId: PersistentVolumeClaimController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/persistentvolumeclaims/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: get all id and names
+      operationId: PersistentVolumeClaimController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.PersistentVolumeClaim'
+  /apps/{appid}/persistentvolumeclaims/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims/tpls
+      description: get all PersistentVolumeClaimTemplate
+      operationId: PersistentVolumeClaimTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.PersistentVolumeClaimTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims/tpls
+      description: create PersistentVolumeClaimTemplate
+      operationId: PersistentVolumeClaimTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The PersistentVolumeClaimTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.PersistentVolumeClaimTemplate'
+      responses:
+        "200":
+          description: return model.PersistentVolumeClaimTemplate success
+  /apps/{appid}/persistentvolumeclaims/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims/tpls
+      description: find Object by id
+      operationId: PersistentVolumeClaimTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.PersistentVolumeClaimTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims/tpls
+      description: update the PersistentVolumeClaimTemplate
+      operationId: PersistentVolumeClaimTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.PersistentVolumeClaimTemplate'
+      responses:
+        "200":
+          description: model.PersistentVolumeClaimTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims/tpls
+      description: delete the PersistentVolumeClaimTemplate
+      operationId: PersistentVolumeClaimTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/persistentvolumeclaims/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/persistentvolumeclaims
+      description: batch update the Orders
+      operationId: PersistentVolumeClaimController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.PersistentVolumeClaim'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/secrets/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: get all Secret
+      operationId: SecretController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Secret'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: create Secret
+      operationId: SecretController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The Secret content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Secret'
+      responses:
+        "200":
+          description: return model.Secret success
+  /apps/{appid}/secrets/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: find Object by id
+      operationId: SecretController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Secret'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: update the Secret
+      operationId: SecretController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Secret'
+      responses:
+        "200":
+          description: model.Secret success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: delete the Secret
+      operationId: SecretController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/secrets/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: get all id and names
+      operationId: SecretController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Secret'
+  /apps/{appid}/secrets/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/secrets/tpls
+      description: get all SecretTemplate
+      operationId: SecretTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.SecretTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/secrets/tpls
+      description: create SecretTemplate
+      operationId: SecretTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The SecretTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.SecretTemplate'
+      responses:
+        "200":
+          description: return model.SecretTemplate success
+  /apps/{appid}/secrets/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/secrets/tpls
+      description: find Object by id
+      operationId: SecretTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.SecretTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/secrets/tpls
+      description: update the SecretTemplate
+      operationId: SecretTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.SecretTemplate'
+      responses:
+        "200":
+          description: model.SecretTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/secrets/tpls
+      description: delete the SecretTemplate
+      operationId: SecretTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/secrets/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/secrets
+      description: batch update the Orders
+      operationId: SecretController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.Secret'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/statefulsets/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: get all Statefulset
+      operationId: StatefulsetController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted, default list all
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Statefulset'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: create Statefulset
+      operationId: StatefulsetController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The Statefulset content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Statefulset'
+      responses:
+        "200":
+          description: return model.Statefulset success
+  /apps/{appid}/statefulsets/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: find Object by id
+      operationId: StatefulsetController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Statefulset'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: update the Statefulset
+      operationId: StatefulsetController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Statefulset'
+      responses:
+        "200":
+          description: model.Statefulset success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: delete the Statefulset
+      operationId: StatefulsetController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/statefulsets/names:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: get all id and names
+      operationId: StatefulsetController.List/
+      parameters:
+      - in: query
+        name: appId
+        description: the app id
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Statefulset'
+  /apps/{appid}/statefulsets/tpls/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets/tpls
+      description: get all StatefulsetTemplate
+      operationId: StatefulsetTplController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: statefulsetId
+        description: statefulset id
+        type: integer
+        format: int64
+      - in: query
+        name: isOnline
+        description: only show online tpls,default false
+        type: boolean
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.StatefulsetTemplate'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets/tpls
+      description: create StatefulsetTemplate
+      operationId: StatefulsetTplController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The StatefulsetTemplate content
+        required: true
+        schema:
+          $ref: '#/definitions/model.StatefulsetTemplate'
+      responses:
+        "200":
+          description: return model.StatefulsetTemplate success
+  /apps/{appid}/statefulsets/tpls/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets/tpls
+      description: find Object by id
+      operationId: StatefulsetTplController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.StatefulsetTemplate'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets/tpls
+      description: update the StatefulsetTemplate
+      operationId: StatefulsetTplController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.StatefulsetTemplate'
+      responses:
+        "200":
+          description: model.StatefulsetTemplate success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets/tpls
+      description: delete the StatefulsetTemplate
+      operationId: StatefulsetTplController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/statefulsets/updateorders:
+    put:
+      tags:
+      - apps/:appid([0-9]+)/statefulsets
+      description: batch update the Orders
+      operationId: StatefulsetController.UpdateOrders
+      parameters:
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/model.Statefulset'
+      responses:
+        "200":
+          description: model.Deployment success
+  /apps/{appid}/users/:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: get all appUser
+      operationId: AppUserController.List/
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.AppUser'
+    post:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: create app
+      operationId: AppUserController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The app content
+        required: true
+        schema:
+          $ref: '#/definitions/model.AppUser'
+      responses:
+        "200":
+          description: return model.AppUser success
+  /apps/{appid}/users/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: find Object by id
+      operationId: AppUserController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.AppUser'
+    put:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: update the AppUser
+      operationId: AppUserController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.AppUser'
+      responses:
+        "200":
+          description: model.Namespace success
+    delete:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: delete the AppUser
+      operationId: AppUserController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/users/permissions/{id}:
+    get:
+      tags:
+      - apps/:appid([0-9]+)/users
+      description: get PerApp by appId
+      operationId: AppUserController.GetPerApp
+      parameters:
+      - in: path
+        name: id
+        description: the app id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.TypeApp'
+  /apps/{appid}/webhooks/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: 获取Webhook列表
+      operationId: WebHookController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.WebHook'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: create WebHook
+      operationId: WebHookController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The WebHook content
+        required: true
+        schema:
+          $ref: '#/definitions/model.WebHook'
+      responses:
+        "200":
+          description: return model.WebHook success
+  /apps/{appid}/webhooks/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: find Object by id
+      operationId: WebHookController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.WebHook'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: update the WebHook
+      operationId: WebHookController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.WebHook'
+      responses:
+        "200":
+          description: model.WebHook success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: delete the WebHook
+      operationId: WebHookController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /apps/{appid}/webhooks/events:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: 获取所有关联事件对象
+      operationId: WebHookController.Events
+  /apps/stars/:
+    post:
+      tags:
+      - apps/stars
+      description: create AppStarred
+      operationId: AppStarredController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The app content
+        required: true
+        schema:
+          $ref: '#/definitions/model.AppStarred'
+      responses:
+        "200":
+          description: return id success
+        "403":
+          description: body is empty
+  /apps/stars/{appId}:
+    delete:
+      tags:
+      - apps/stars
+      description: delete the AppStarred
+      operationId: AppStarredController.Delete by AppId
+      parameters:
+      - in: path
+        name: name
+        description: The appId you want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: appId is empty
+  /auditlogs/:
+    get:
+      tags:
+      - auditlogs
+      description: get audit log
+      operationId: AuditLogController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.AuditLog'
+  /clusters/:
+    get:
+      tags:
+      - clusters
+      description: get all objects
+      operationId: ClusterController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Cluster'
+    post:
+      tags:
+      - clusters
+      description: create Cluster
+      operationId: ClusterController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The app content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Cluster'
+      responses:
+        "200":
+          description: return id success
+        "403":
+          description: body is empty
+  /clusters/{name}:
+    get:
+      tags:
+      - clusters
+      description: find Object by objectid
+      operationId: ClusterController.Get
+      parameters:
+      - in: path
+        name: name
+        description: the name you want to get
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Cluster'
+        "403":
+          description: :name is empty
+    put:
+      tags:
+      - clusters
+      description: update the object
+      operationId: ClusterController.Update
+      parameters:
+      - in: path
+        name: name
+        description: The name you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Cluster'
+      responses:
+        "200":
+          description: id success
+        "403":
+          description: :name is empty
+    delete:
+      tags:
+      - clusters
+      description: delete the app
+      operationId: ClusterController.Delete
+      parameters:
+      - in: path
+        name: name
+        description: The name you want to delete
+        required: true
+        type: string
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: name is empty
+  /clusters/names:
+    get:
+      tags:
+      - clusters
+      description: get all id and names
+      operationId: ClusterController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Cluster'
+  /configs/:
+    get:
+      tags:
+      - configs
+      description: get system config
+      operationId: ConfigController.GetConfig
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/Config'
+    post:
+      tags:
+      - configs
+      description: create Config
+      operationId: ConfigController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The Config content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Config'
+      responses:
+        "200":
+          description: return id success
+        "403":
+          description: body is empty
+  /configs/{id}:
+    get:
+      tags:
+      - configs
+      description: find Object by objectid
+      operationId: ConfigController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Config'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - configs
+      description: update the object
+      operationId: ConfigController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Config'
+      responses:
+        "200":
+          description: id success
+        "403":
+          description: :id is empty
+    delete:
+      tags:
+      - configs
+      description: delete the app
+      operationId: ConfigController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} delete success!'
+        "403":
+          description: id is empty
+  /configs/base/:
+    get:
+      tags:
+      - configs/base
+      description: get base config
+      operationId: BaseConfigController.GetConfig
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/Config'
+  /configs/system:
+    get:
+      tags:
+      - configs
+      description: get system config
+      operationId: ConfigController.GetConfig
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/Config'
+  /customlinks/:
+    get:
+      tags:
+      - customlinks
+      description: get outer custom link type
+      operationId: CustomLinkController.GetCustomLink
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/CustomLink'
+    post:
+      tags:
+      - customlinks
+      description: create CustomLink
+      operationId: CustomLinkController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The CustomLink content
+        required: true
+        schema:
+          $ref: '#/definitions/model.CustomLink'
+      responses:
+        "200":
+          description: return id success
+        "403":
+          description: body is empty
+  /customlinks/{id}:
+    get:
+      tags:
+      - customlinks
+      description: find Object by objectid
+      operationId: CustomLinkController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.CustomLink'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - customlinks
+      description: update the object
+      operationId: CustomLinkController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.CustomLink'
+      responses:
+        "200":
+          description: id success
+        "403":
+          description: :id is empty
+    delete:
+      tags:
+      - customlinks
+      description: delete the customLink
+      operationId: CustomLinkController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /customlinks/{id}/status:
+    put:
+      tags:
+      - customlinks
+      description: change the customLink status
+      operationId: CustomLinkController.ChangeStatus
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to change status
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} update success!'
+  /gateway/action/get_app_deploys:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_deployment_detail:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_deployment_status:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_latest_deployment_tpl:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_pod_info:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_pod_info_from_ip:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_pod_list:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/get_resource_info:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/list_namespace_apps:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/list_namespace_users:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/restart_deployment:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/scale_deployment:
+    get:
+      tags:
+      - gateway/action
+  /gateway/action/upgrade_deployment:
+    get:
+      tags:
+      - gateway/action
+  /groups/:
+    get:
+      tags:
+      - groups
+      description: get all group
+      operationId: GroupController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Group'
+    post:
+      tags:
+      - groups
+      description: create group
+      operationId: GroupController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The group content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Group'
+      responses:
+        "200":
+          description: return model.Group success
+  /groups/{id}:
+    get:
+      tags:
+      - groups
+      description: find Object by id
+      operationId: GroupController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Group'
+    put:
+      tags:
+      - groups
+      description: update the group
+      operationId: GroupController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Group'
+      responses:
+        "200":
+          description: model.Group success
+    delete:
+      tags:
+      - groups
+      description: delete the Group
+      operationId: GroupController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/apps/{appid}/configmaps/{configMapId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/configmaps
+      description: deploy tpl
+      operationId: KubeConfigMapController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/cronjobs/{cronjob}/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/cronjobs
+      description: find Cronjob by cluster
+      operationId: KubeCronjobController.Get
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Cronjob'
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/cronjobs
+      description: delete the Cronjob
+      operationId: KubeCronjobController.Delete
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster want to delete
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace want to delete
+        required: true
+        type: string
+      - in: path
+        name: cronjob
+        description: the cronjob name want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/apps/{appid}/cronjobs/{cronjobId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/cronjobs
+      description: deploy tpl
+      operationId: KubeCronjobController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/cronjobs/{cronjobId}/tpls/{tplId}/clusters/{cluster}/suspend:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/cronjobs
+      description: Suspend CronJob
+      operationId: KubeCronjobController.Suspend CronJob
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/daemonsets/{daemonSet}/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/daemonsets
+      description: find DaemonSet by cluster
+      operationId: KubeDaemonSetController.Get
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.DaemonSet'
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/daemonsets
+      description: delete the DaemonSet
+      operationId: KubeDaemonSetController.Delete
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster want to delete
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace want to delete
+        required: true
+        type: string
+      - in: path
+        name: daemonSet
+        description: the daemonSet name want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/apps/{appid}/daemonsets/{daemonSetId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/daemonsets
+      description: deploy tpl
+      operationId: KubeDaemonSetController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/deployments/{deployment}/detail/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/deployments
+      description: find Deployment by cluster
+      operationId: KubeDeploymentController.Get
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Deployment'
+  /kubernetes/apps/{appid}/deployments/{deployment}/namespaces/{namespace}/clusters/{cluster}:
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/deployments
+      description: delete the Deployment
+      operationId: KubeDeploymentController.Delete
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster want to delete
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace want to delete
+        required: true
+        type: string
+      - in: path
+        name: deployment
+        description: the deployment name want to delete
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/apps/{appid}/deployments/{deployment}/namespaces/{namespace}/clusters/{cluster}/updatescale:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/deployments
+      description: Update the number of replica for target deployment
+      operationId: KubeDeploymentController.UpdateScale
+      parameters:
+      - in: path
+        name: cluster
+        description: the target k8s cluster
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace that the target deployment belong to
+        required: true
+        type: string
+      - in: path
+        name: deployment
+        description: the target deployment name
+        required: true
+        type: string
+      - in: body
+        name: replica
+        description: number of replica
+        required: true
+        schema:
+          format: int32
+          type: integer
+        type: integer
+        format: int32
+      responses:
+        "200":
+          description: '{string} ok success'
+  /kubernetes/apps/{appid}/deployments/{deploymentId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/deployments
+      description: deploy tpl
+      operationId: KubeDeploymentController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/deployments/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/deployments
+      description: get all deployment
+      operationId: KubeDeploymentController.List deployment
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: filter
+        description: column filter, ex. filter=name=test
+        type: string
+      - in: query
+        name: sortby
+        description: column sorted by, ex. sortby=-id, '-' representation desc, and
+          sortby=id representation asc
+        type: string
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/common.Page'
+  /kubernetes/apps/{appid}/events/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/events
+      description: Get Pod Event by resource type and name
+      operationId: KubeEventController.GetPodEvent
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: type
+        description: the query type. deployments, statefulsets, daemonsets,cronjobs
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: the query resource name.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Deployment'
+  /kubernetes/apps/{appid}/hpas/{hpaId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/hpas
+  /kubernetes/apps/{appid}/ingresses/{ingressId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/ingresses
+      description: deploy tpl
+      operationId: KubeIngressController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/jobs/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/jobs
+      description: find jobs by cronjob
+      operationId: KubeJobController.ListJobByCronJob
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: the cronjob name.
+        required: true
+        type: string
+      - in: query
+        name: cluster
+        description: the cluster name.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Deployment'
+  /kubernetes/apps/{appid}/persistentvolumeclaims/{pvcId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims
+      description: deploy tpl
+      operationId: KubePersistentVolumeClaimController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/rbd/namespaces/{namespace}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: active rbd images
+      operationId: RobinPersistentVolumeClaimController.Active Image
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: inActive rbd images
+      operationId: RobinPersistentVolumeClaimController.InActive Image
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/snapshot/{version}/namespaces/{namespace}/clusters/{cluster}:
+    put:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: rollback to snapshot version
+      operationId: RobinPersistentVolumeClaimController.rollback to snapshot version
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: create snapshot
+      operationId: RobinPersistentVolumeClaimController.create snapshot
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: delete snapshot
+      operationId: RobinPersistentVolumeClaimController.delete snapshot
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/snapshot/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: list snapshot
+      operationId: RobinPersistentVolumeClaimController.list snapshot
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: delete all snapshot
+      operationId: RobinPersistentVolumeClaimController.delete all snapshot
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/status/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: find PersistentVolumeClaim by cluster
+      operationId: RobinPersistentVolumeClaimController.Get pvc status
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/user/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: get user info
+      operationId: RobinPersistentVolumeClaimController.get user info
+    delete:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: offline image user
+      operationId: RobinPersistentVolumeClaimController.offline image user
+  /kubernetes/apps/{appid}/persistentvolumeclaims/robin/{pvc}/verify/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/persistentvolumeclaims/robin
+      description: verify file
+      operationId: RobinPersistentVolumeClaimController.verify file
+  /kubernetes/apps/{appid}/podlogs/{pod}/containers/{container}/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/podlogs
+      description: pod logs
+      operationId: KubeLogController.log
+      parameters:
+      - in: query
+        name: tailLines
+        description: log tail lines.
+        required: true
+        type: integer
+        format: int64
+      - in: path
+        name: cluster
+        description: cluster name.
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: namespace name.
+        required: true
+        type: string
+      - in: path
+        name: pod
+        description: pod name.
+        required: true
+        type: string
+      - in: path
+        name: container
+        description: container name.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: text" success
+          schema:
+            $ref: '#/definitions/"log'
+  /kubernetes/apps/{appid}/pods/{pod}/terminal/namespaces/{namespace}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/pods
+      description: create container terminal
+      operationId: KubePodController.Create terminal
+      parameters:
+      - in: query
+        name: cmd
+        description: the cmd you want to exec.
+        required: true
+        type: string
+      - in: query
+        name: container
+        description: the container name.
+        required: true
+        type: string
+  /kubernetes/apps/{appid}/pods/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/pods
+      description: find pods by resource type
+      operationId: KubePodController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: type
+        description: the query type. deployment, statefulset, daemonSet, job, pod
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: the query resource name.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Deployment'
+  /kubernetes/apps/{appid}/secrets/{secretId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/secrets
+      description: deploy tpl
+      operationId: KubeSecretController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/services/{service}/detail/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/services
+      description: find Deployment by cluster
+      operationId: KubeServiceController.GetDetail
+      parameters:
+      - in: path
+        name: cluster
+        description: the cluster name
+        required: true
+        type: string
+      - in: path
+        name: namespace
+        description: the namespace name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/service.ServiceDetail'
+  /kubernetes/apps/{appid}/services/{serviceId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/services
+      description: deploy tpl
+      operationId: KubeServiceController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/apps/{appid}/statefulsets/{statefulset}/namespaces/{namespace}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/statefulsets
+      description: find Statefulset by cluster
+      operationId: KubeStatefulsetController.Get
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Statefulset'
+  /kubernetes/apps/{appid}/statefulsets/{statefulsetId}/tpls/{tplId}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/apps/:appid([0-9]+)/statefulsets
+      description: deploy tpl
+      operationId: KubeStatefulsetController.deploy
+      parameters:
+      - in: body
+        name: body
+        description: The tpl content
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/namespaces/{name}/clusters/{cluster}:
+    post:
+      tags:
+      - kubernetes/namespaces
+      description: create the namespace
+      operationId: KubeNamespaceController.Create
+  /kubernetes/namespaces/{namespaceid}/resources:
+    get:
+      tags:
+      - kubernetes/namespaces
+      description: Get namespace resource statistics
+      operationId: KubeNamespaceController.Get namespace resource statistics
+      parameters:
+      - in: query
+        name: app
+        description: The app Name
+        type: string
+      - in: path
+        name: nid
+        description: The namespace id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/namespaces/{namespaceid}/statistics:
+    get:
+      tags:
+      - kubernetes/namespaces
+      description: Get namespace resource statistics for report
+      operationId: KubeNamespaceController.Get namespace resource statistics 2.0
+      parameters:
+      - in: query
+        name: app
+        description: The app Name
+        type: string
+      - in: path
+        name: nid
+        description: The namespace id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: return ok success
+  /kubernetes/nodes/{name}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/nodes
+      description: find node by cluster
+      operationId: KubeNodeController.get node
+    put:
+      tags:
+      - kubernetes/nodes
+      description: update the Node
+      operationId: KubeNodeController.Update
+    delete:
+      tags:
+      - kubernetes/nodes
+      description: delete the Node
+      operationId: KubeNodeController.Delete
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/nodes/{name}/clusters/{cluster}/label:
+    post:
+      tags:
+      - kubernetes/nodes
+      description: add a label for a node
+      operationId: KubeNodeController.add label
+    delete:
+      tags:
+      - kubernetes/nodes
+      description: delete a label of the node
+      operationId: KubeNodeController.delete label
+  /kubernetes/nodes/{name}/clusters/{cluster}/labels:
+    get:
+      tags:
+      - kubernetes/nodes
+      description: get labels of a node
+      operationId: KubeNodeController.list node labels
+    post:
+      tags:
+      - kubernetes/nodes
+      description: Add labels in bulk for node
+      operationId: KubeNodeController.add labels
+    delete:
+      tags:
+      - kubernetes/nodes
+      description: Delete node labels in batches
+      operationId: KubeNodeController.delete labels
+  /kubernetes/nodes/{name}/clusters/{cluster}/taint:
+    post:
+      tags:
+      - kubernetes/nodes
+      description: set taint for a node
+      operationId: KubeNodeController.add taint
+    delete:
+      tags:
+      - kubernetes/nodes
+      description: delete a taint from node
+      operationId: KubeNodeController.delete taint
+  /kubernetes/nodes/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/nodes
+      description: list nodes
+      operationId: KubeNodeController.List node
+  /kubernetes/nodes/statistics:
+    get:
+      tags:
+      - kubernetes/nodes
+      description: kubernetes statistics
+      operationId: KubeNodeController.kubernetes node statistics
+      parameters:
+      - in: query
+        name: cluster
+        description: the cluster
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/node.NodeStatistics'
+  /kubernetes/persistentvolumes/{name}/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/persistentvolumes
+      description: find pv by cluster
+      operationId: KubePersistentVolumeController.get pv
+    put:
+      tags:
+      - kubernetes/persistentvolumes
+      description: update the PersistentVolume
+      operationId: KubePersistentVolumeController.Update
+    delete:
+      tags:
+      - kubernetes/persistentvolumes
+      description: delete the PersistentVolume
+      operationId: KubePersistentVolumeController.Delete
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /kubernetes/persistentvolumes/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/persistentvolumes
+      description: find pv by cluster
+      operationId: KubePersistentVolumeController.List pv
+    post:
+      tags:
+      - kubernetes/persistentvolumes
+      description: create PersistentVolume
+      operationId: KubePersistentVolumeController.Create
+  /kubernetes/persistentvolumes/robin/rbd.images/clusters/{cluster}:
+    get:
+      tags:
+      - kubernetes/persistentvolumes/robin
+      description: find rbd images by cluster
+      operationId: RobinPersistentVolumeController.List RBD
+    post:
+      tags:
+      - kubernetes/persistentvolumes/robin
+      description: create rbd images
+      operationId: RobinPersistentVolumeController.Create
+  /linktypes/:
+    get:
+      tags:
+      - linktypes
+      description: get outer custom link type
+      operationId: LinkTypeController.GetLinkType
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/LinkType'
+    post:
+      tags:
+      - linktypes
+      description: create LinkType
+      operationId: LinkTypeController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The LinkType content
+        required: true
+        schema:
+          $ref: '#/definitions/model.LinkType'
+      responses:
+        "200":
+          description: return id success
+        "403":
+          description: body is empty
+  /linktypes/{id}:
+    get:
+      tags:
+      - linktypes
+      description: find Object by objectid
+      operationId: LinkTypeController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.LinkType'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - linktypes
+      description: update the object
+      operationId: LinkTypeController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.LinkType'
+      responses:
+        "200":
+          description: id success
+        "403":
+          description: :id is empty
+    delete:
+      tags:
+      - linktypes
+      description: delete the linkType
+      operationId: LinkTypeController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/:
+    get:
+      tags:
+      - namespaces
+      description: get all namespaces
+      operationId: NamespaceController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Namespace'
+    post:
+      tags:
+      - namespaces
+      description: create namespace
+      operationId: NamespaceController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The namespace content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Namespace'
+      responses:
+        "200":
+          description: return model.Namespace success
+  /namespaces/{id}:
+    get:
+      tags:
+      - namespaces
+      description: find Object by id
+      operationId: NamespaceController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Namespace'
+    put:
+      tags:
+      - namespaces
+      description: update the namespace
+      operationId: NamespaceController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Namespace'
+      responses:
+        "200":
+          description: model.Namespace success
+    delete:
+      tags:
+      - namespaces
+      description: delete the Namespace
+      operationId: NamespaceController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/{id}/history:
+    get:
+      tags:
+      - namespaces
+      description: get publish history by namespace
+      operationId: NamespaceController.Get Publish History
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to get publish history
+        required: true
+        type: integer
+        format: int64
+  /namespaces/{id}/statistics:
+    get:
+      tags:
+      - namespaces
+      description: The app resource count statistics
+      operationId: NamespaceController.Resource Count
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.AppCount'
+  /namespaces/{namespaceid}/apikeys/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: get all
+      operationId: ApiKeyController.List/
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted, default list all.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.APIKey'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: create APIKey
+      operationId: ApiKeyController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The APIKey content
+        required: true
+        schema:
+          $ref: '#/definitions/model.APIKey'
+      responses:
+        "200":
+          description: return model.APIKey success
+  /namespaces/{namespaceid}/apikeys/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: find Object by id
+      operationId: ApiKeyController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.APIKey'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: update the App
+      operationId: ApiKeyController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.APIKey'
+      responses:
+        "200":
+          description: model.APIKey success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apikeys
+      description: delete the APIKey
+      operationId: ApiKeyController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/{namespaceid}/apps/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: get all app
+      operationId: AppController.List/
+      parameters:
+      - in: query
+        name: starred
+        description: is starred app.default not star
+        type: boolean
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: name
+        description: name filter
+        type: string
+      - in: query
+        name: namespaceId
+        description: namespace id
+        type: integer
+        format: int64
+      - in: query
+        name: deleted
+        description: is deleted, default list all.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.App'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: create app
+      operationId: AppController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The app content
+        required: true
+        schema:
+          $ref: '#/definitions/model.App'
+      responses:
+        "200":
+          description: return model.App success
+  /namespaces/{namespaceid}/apps/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: find Object by id
+      operationId: AppController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.App'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: update the App
+      operationId: AppController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.App'
+      responses:
+        "200":
+          description: model.Namespace success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: delete the App
+      operationId: AppController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/{namespaceid}/apps/names:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/apps
+      description: get all id and names
+      operationId: AppController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.App'
+  /namespaces/{namespaceid}/bills/{appid}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/bills
+      description: 用于项目账单的获取，该接口优先用于 app 级别的账单获取
+      operationId: BillController.List Invoice/
+      parameters:
+      - in: query
+        name: app
+        description: resource app
+        type: string
+      - in: query
+        name: namespace
+        description: resource namespace
+        type: string
+  /namespaces/{namespaceid}/bills/{appid}/{name}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/bills
+      description: 用于项目账单明细的获取
+      operationId: BillController.List Charge/
+      parameters:
+      - in: query
+        name: app
+        description: resource app
+        type: string
+      - in: query
+        name: namespace
+        description: resource namespace
+        type: string
+  /namespaces/{namespaceid}/customlink/links:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/customlink
+      description: Get all custom links belonging to this namespace
+      operationId: ShowLinkController.GetCustomLink
+      parameters:
+      - in: query
+        name: namespaceId
+        description: namespace id
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/allLinks'
+  /namespaces/{namespaceid}/users/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: get all namespaceUser
+      operationId: NamespaceUserController.List/
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.NamespaceUser'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: create namespaceUser
+      operationId: NamespaceUserController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The namespaceUser content
+        required: true
+        schema:
+          $ref: '#/definitions/model.NamespaceUser'
+      responses:
+        "200":
+          description: return model.NamespaceUser success
+  /namespaces/{namespaceid}/users/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: find Object by id
+      operationId: NamespaceUserController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.NamespaceUser'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: update the NamespaceUser
+      operationId: NamespaceUserController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.NamespaceUser'
+      responses:
+        "200":
+          description: model.Namespace success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: delete the NamespaceUser
+      operationId: NamespaceUserController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/{namespaceid}/users/permissions/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/users
+      description: get PerNS by nsId
+      operationId: NamespaceUserController.GetPerNS
+      parameters:
+      - in: path
+        name: id
+        description: the ns id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.TypeApp'
+  /namespaces/{namespaceid}/webhooks/:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: 获取Webhook列表
+      operationId: WebHookController.List
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.WebHook'
+    post:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: create WebHook
+      operationId: WebHookController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The WebHook content
+        required: true
+        schema:
+          $ref: '#/definitions/model.WebHook'
+      responses:
+        "200":
+          description: return model.WebHook success
+  /namespaces/{namespaceid}/webhooks/{id}:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: find Object by id
+      operationId: WebHookController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.WebHook'
+    put:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: update the WebHook
+      operationId: WebHookController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.WebHook'
+      responses:
+        "200":
+          description: model.WebHook success
+    delete:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: delete the WebHook
+      operationId: WebHookController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: logical
+        description: is logical deletion,default true
+        type: boolean
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /namespaces/{namespaceid}/webhooks/events:
+    get:
+      tags:
+      - namespaces/:namespaceid([0-9]+)/webhooks
+      description: 获取所有关联事件对象
+      operationId: WebHookController.Events
+  /namespaces/init:
+    get:
+      tags:
+      - namespaces
+      description: init default namespace
+      operationId: NamespaceController.Get
+  /namespaces/migration:
+    post:
+      tags:
+      - namespaces
+      description: migrate the namespace from a to b
+      operationId: NamespaceController.Migrate
+      parameters:
+      - in: body
+        name: body
+        description: The namespace migration content
+        required: true
+        schema:
+          $ref: '#/definitions/model.NamespaceMigration'
+  /namespaces/names:
+    get:
+      tags:
+      - namespaces
+      description: get all id and names
+      operationId: NamespaceController.List/
+      parameters:
+      - in: query
+        name: deleted
+        description: is deleted,default false.
+        type: boolean
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Namespace'
+  /notifications/:
+    get:
+      tags:
+      - notifications
+    put:
+      tags:
+      - notifications
+    post:
+      tags:
+      - notifications
+  /notifications/subscribe:
+    get:
+      tags:
+      - notifications
+    put:
+      tags:
+      - notifications
+  /permissions/:
+    get:
+      tags:
+      - permissions
+      description: get all permission
+      operationId: PermissionController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.Permission'
+    post:
+      tags:
+      - permissions
+      description: create permission
+      operationId: PermissionController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The permission content
+        required: true
+        schema:
+          $ref: '#/definitions/model.Permission'
+      responses:
+        "200":
+          description: return model.Permission success
+  /permissions/{id}:
+    get:
+      tags:
+      - permissions
+      description: find Object by id
+      operationId: PermissionController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.Permission'
+    put:
+      tags:
+      - permissions
+      description: update the permission
+      operationId: PermissionController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Permission'
+      responses:
+        "200":
+          description: model.Permission success
+    delete:
+      tags:
+      - permissions
+      description: delete the Permission
+      operationId: PermissionController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /publish/histories:
+    get:
+      tags:
+      - publish
+      description: get all PublishHistory
+      operationId: PublishController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      - in: query
+        name: resourceId
+        description: the ResourceId id,e.g. deployment id
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: type
+        description: "the ResourceId type ,\t DEPLOYMENT 0 SERVICE 1 CONFIGMAP 2 SECRET
+          3"
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.PublishHistory'
+  /publish/statistics:
+    get:
+      tags:
+      - publish
+      description: kubernetes statistics
+      operationId: PublishController.kubernetes deploy statistics
+      parameters:
+      - in: query
+        name: start_time
+        description: the statistics start time
+        type: string
+      - in: query
+        name: end_time
+        description: the statistics end time
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/node.NodeStatistics'
+  /publishstatus/:
+    get:
+      tags:
+      - publishstatus
+      description: get all PublishStatus
+      operationId: PublishStatusController.GetAll
+      parameters:
+      - in: query
+        name: resourceId
+        description: the ResourceId id,e.g. deployment id
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: type
+        description: "the ResourceId type ,\t DEPLOYMENT 0 SERVICE 1 CONFIGMAP 2 SECRET
+          3"
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.PublishStatus'
+  /publishstatus/{id}:
+    delete:
+      tags:
+      - publishstatus
+      description: delete the publishstatus
+      operationId: PublishStatusController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /users/:
+    get:
+      tags:
+      - users
+      description: get all user
+      operationId: UserController.GetAll
+      parameters:
+      - in: query
+        name: pageNo
+        description: the page current no
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: the page size
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.User'
+    post:
+      tags:
+      - users
+      description: create user
+      operationId: UserController.Create
+      parameters:
+      - in: body
+        name: body
+        description: The user content
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: return model.User success
+  /users/{id}:
+    get:
+      tags:
+      - users
+      description: find Object by id
+      operationId: UserController.Get
+      parameters:
+      - in: path
+        name: id
+        description: the id you want to get
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.User'
+    put:
+      tags:
+      - users
+      description: update the user
+      operationId: UserController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: model.User success
+    delete:
+      tags:
+      - users
+      description: delete the User
+      operationId: UserController.Delete
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} delete success!'
+  /users/{id}/admin:
+    put:
+      tags:
+      - users
+      description: update the user admin
+      operationId: UserController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: model.User success
+  /users/{id}/resetpassword:
+    put:
+      tags:
+      - users
+      description: update the user admin
+      operationId: UserController.Update
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: integer
+        format: int64
+      - in: body
+        name: body
+        description: The body
+        required: true
+        schema:
+          $ref: '#/definitions/Object'
+      responses:
+        "200":
+          description: model.User success
+  /users/names:
+    get:
+      tags:
+      - users
+      description: get all id and names
+      operationId: UserController.GetNames/
+      responses:
+        "200":
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/model.User'
+  /users/statistics:
+    get:
+      tags:
+      - users
+      description: user count statistics
+      operationId: UserController.user statistics
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/model.AppCount'
+definitions:
+  '"log':
+    title: '"log'
+    type: object
+  224.0xc000281ad0.false:
+    title: "false"
+    type: object
+  37167.bool:
+    title: bool
+    type: object
+  46288.bool:
+    title: bool
+    type: object
+  53093.bool:
+    title: bool
+    type: object
+  130658.bool:
+    title: bool
+    type: object
+  Config:
+    title: Config
+    type: object
+  CustomLink:
+    title: CustomLink
+    type: object
+  LinkType:
+    title: LinkType
+    type: object
+  Object:
+    title: Object
+    type: object
+  allLinks:
+    title: allLinks
+    type: object
+  api.Protocol:
+    title: Protocol
+    type: object
+  common.Endpoint:
+    title: Endpoint
+    type: object
+    properties:
+      host:
+        type: string
+      ports:
+        type: array
+        items:
+          $ref: '#/definitions/common.ServicePort'
+  common.Event:
+    title: Event
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int32
+      firstSeen:
+        $ref: '#/definitions/v1.Time'
+      lastSeen:
+        $ref: '#/definitions/v1.Time'
+      message:
+        type: string
+      name:
+        type: string
+      object:
+        type: string
+      objectMeta:
+        $ref: '#/definitions/common.ObjectMeta'
+      reason:
+        type: string
+      sourceComponent:
+        type: string
+      type:
+        type: string
+      typeMeta:
+        $ref: '#/definitions/common.TypeMeta'
+  common.ObjectMeta:
+    title: ObjectMeta
+    type: object
+    properties:
+      annotations:
+        additionalProperties:
+          type: string
+      creationTimestamp:
+        $ref: '#/definitions/metaV1.Time'
+      labels:
+        additionalProperties:
+          type: string
+      name:
+        type: string
+      namespace:
+        type: string
+  common.Page:
+    title: Page
+    type: object
+    properties:
+      list:
+        $ref: '#/definitions/224.0xc000281ad0.false'
+      pageNo:
+        type: integer
+        format: int64
+      pageSize:
+        type: integer
+        format: int64
+      totalCount:
+        type: integer
+        format: int64
+      totalPage:
+        type: integer
+        format: int64
+  common.ResourceKind:
+    title: ResourceKind
+    type: string
+  common.ServicePort:
+    title: ServicePort
+    type: object
+    properties:
+      nodePort:
+        type: integer
+        format: int32
+      port:
+        type: integer
+        format: int32
+      protocol:
+        $ref: '#/definitions/api.Protocol'
+  common.TypeMeta:
+    title: TypeMeta
+    type: object
+    properties:
+      kind:
+        $ref: '#/definitions/common.ResourceKind'
+  endpoint.Endpoint:
+    title: Endpoint
+    type: object
+    properties:
+      host:
+        type: string
+      nodeName:
+        type: string
+      objectMeta:
+        $ref: '#/definitions/common.ObjectMeta'
+      ports:
+        type: array
+        items:
+          $ref: '#/definitions/v1.EndpointPort'
+      ready:
+        type: boolean
+      typeMeta:
+        $ref: '#/definitions/common.TypeMeta'
+  kapi.Affinity:
+    title: Affinity
+    type: object
+  metaV1.Time:
+    title: Time
+    type: object
+  model.APIKey:
+    title: APIKey
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      expireIn:
+        type: integer
+        format: int64
+      group:
+        $ref: '#/definitions/model.Group'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      resourceId:
+        type: integer
+        format: int64
+      token:
+        type: string
+      type:
+        $ref: '#/definitions/model.APIKeyType'
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.APIKeyType:
+    title: APIKeyType
+    format: int32
+    type: integer
+    enum:
+    - GlobalAPIKey = 0
+    - NamespaceAPIKey = 1
+    - ApplicationAPIKey = 2
+    example: 0
+  model.App:
+    title: App
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      migrated:
+        type: boolean
+      name:
+        type: string
+      namespace:
+        $ref: '#/definitions/model.Namespace'
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.AppCount:
+    title: AppCount
+    type: object
+  model.AppStarred:
+    title: AppStarred
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      id:
+        type: integer
+        format: int64
+      user:
+        $ref: '#/definitions/model.User'
+  model.AppUser:
+    title: AppUser
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      createTime:
+        type: string
+        format: datetime
+      group:
+        $ref: '#/definitions/model.Group'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/model.Group'
+      groupsName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        $ref: '#/definitions/model.User'
+  model.AuditLog:
+    title: AuditLog
+    type: object
+    properties:
+      action:
+        type: string
+      createTime:
+        type: string
+        format: datetime
+      id:
+        type: integer
+        format: int64
+      logLevel:
+        $ref: '#/definitions/model.AuditLogLevel'
+      logType:
+        $ref: '#/definitions/model.AuditLogType'
+      message:
+        type: string
+      subjectId:
+        type: integer
+        format: int64
+      user:
+        type: string
+      userIp:
+        type: string
+  model.AuditLogLevel:
+    title: AuditLogLevel
+    type: string
+    enum:
+    - AuditLogLevelNormal = "Normal"
+    - AuditLogLevelWarning = "Warning"
+    - AuditLogLevelCritical = "Critical"
+    example: Normal
+  model.AuditLogType:
+    title: AuditLogType
+    type: string
+    enum:
+    - AuditLogTypeUnknown = "Unknown"
+    - AuditLogTypeCreate = "Create"
+    - AuditLogTypeUpdate = "Update"
+    - AuditLogTypeRead = "Read"
+    - AuditLogTypeDelete = "Delete"
+    example: Unknown
+  model.Cluster:
+    title: Cluster
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      displayname:
+        type: string
+      id:
+        type: integer
+        format: int64
+      kubeConfig:
+        type: string
+      master:
+        type: string
+      metaData:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.ClusterStatus'
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.ClusterMeta:
+    title: ClusterMeta
+    type: object
+    properties:
+      resourcesLimit:
+        $ref: '#/definitions/model.ResourcesLimit'
+  model.ClusterMetaData:
+    title: ClusterMetaData
+    type: object
+    properties:
+      Env:
+        type: array
+        items:
+          $ref: '#/definitions/v1.EnvVar'
+      cephfs:
+        $ref: '#/definitions/v1.CephFSVolumeSource'
+      imagePullSecrets:
+        type: array
+        items:
+          $ref: '#/definitions/v1.LocalObjectReference'
+      ingressAnnotations:
+        additionalProperties:
+          type: string
+      logSource:
+        type: string
+      rbd:
+        $ref: '#/definitions/v1.RBDVolumeSource'
+      robin:
+        $ref: '#/definitions/model.ClusterRobinMetaData'
+      serviceAnnotations:
+        additionalProperties:
+          type: string
+  model.ClusterRobinMetaData:
+    title: ClusterRobinMetaData
+    type: object
+    properties:
+      passwordDesKey:
+        type: string
+      sftpPort:
+        type: integer
+        format: int64
+      token:
+        type: string
+      url:
+        type: string
+  model.ClusterStatus:
+    title: ClusterStatus
+    format: int32
+    type: integer
+    enum:
+    - ClusterStatusNormal = 0
+    - ClusterStatusMaintaining = 1
+    example: 0
+  model.Config:
+    title: Config
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        $ref: '#/definitions/model.ConfigKey'
+      value:
+        type: string
+  model.ConfigKey:
+    title: ConfigKey
+    type: string
+    enum:
+    - ConfigKeyTitile = "system.title"
+    - ConfigKeyImageNamePrefix = "system.image-prefix"
+    - ConfigKeyAffinity = "system.affinity"
+    - ConfigKeyMonitorUri = "system.monitor-uri"
+    - ConfigKeyApiNameGenerateRule = "system.api-name-generate-rule"
+    - ConfigKeyOauth2Title = "system.oauth2-title"
+    example: system.title
+  model.ConfigMap:
+    title: ConfigMap
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.ConfigMapTemplate:
+    title: ConfigMapTemplate
+    type: object
+    properties:
+      configMap:
+        $ref: '#/definitions/model.ConfigMap'
+      configMapId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.Cronjob:
+    title: Cronjob
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.CronjobMetaData:
+    title: CronjobMetaData
+    type: object
+    properties:
+      affinity:
+        $ref: '#/definitions/kapi.Affinity'
+      privileged:
+        $ref: '#/definitions/37167.bool'
+      replicas:
+        additionalProperties:
+          type: integer
+          format: int32
+      suspends:
+        additionalProperties:
+          type: boolean
+  model.CronjobTemplate:
+    title: CronjobTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      cronjob:
+        $ref: '#/definitions/model.Cronjob'
+      cronjobId:
+        type: integer
+        format: int64
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.CustomLink:
+    title: CustomLink
+    type: object
+    properties:
+      addParam:
+        type: boolean
+      deleted:
+        type: boolean
+      displayname:
+        type: string
+      id:
+        type: integer
+        format: int64
+      linkType:
+        type: string
+      namespace:
+        type: string
+      params:
+        type: string
+      status:
+        type: boolean
+      url:
+        type: string
+  model.DaemonSet:
+    title: DaemonSet
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.DaemonSetMetaData:
+    title: DaemonSetMetaData
+    type: object
+    properties:
+      affinity:
+        $ref: '#/definitions/kapi.Affinity'
+      privileged:
+        $ref: '#/definitions/46288.bool'
+      resources:
+        additionalProperties:
+          type: string
+  model.DaemonSetTemplate:
+    title: DaemonSetTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      daemonSet:
+        $ref: '#/definitions/model.DaemonSet'
+      daemonSetId:
+        type: integer
+        format: int64
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.Deployment:
+    title: Deployment
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.DeploymentMetaData:
+    title: DeploymentMetaData
+    type: object
+    properties:
+      affinity:
+        $ref: '#/definitions/kapi.Affinity'
+      privileged:
+        $ref: '#/definitions/53093.bool'
+      replicas:
+        additionalProperties:
+          type: integer
+          format: int32
+      resources:
+        additionalProperties:
+          type: string
+  model.DeploymentTemplate:
+    title: DeploymentTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      deployment:
+        $ref: '#/definitions/model.Deployment'
+      deploymentId:
+        type: integer
+        format: int64
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.Group:
+    title: Group
+    type: object
+    properties:
+      appUsers:
+        type: array
+        items:
+          $ref: '#/definitions/model.AppUser'
+      comment:
+        type: string
+      createTime:
+        type: string
+        format: datetime
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      namespaceUsers:
+        type: array
+        items:
+          $ref: '#/definitions/model.NamespaceUser'
+      permissions:
+        type: array
+        items:
+          $ref: '#/definitions/model.Permission'
+      type:
+        $ref: '#/definitions/model.GroupType'
+      updateTime:
+        type: string
+        format: datetime
+  model.GroupType:
+    title: GroupType
+    format: int64
+    type: integer
+  model.LinkType:
+    title: LinkType
+    type: object
+    properties:
+      defaultUrl:
+        type: string
+      deleted:
+        type: boolean
+      displayname:
+        type: string
+      id:
+        type: integer
+        format: int64
+      paramList:
+        type: string
+      typeName:
+        type: string
+  model.Namespace:
+    title: Namespace
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      id:
+        type: integer
+        format: int64
+      kubeNamespace:
+        type: string
+      metaData:
+        type: string
+      name:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.NamespaceMetaData:
+    title: NamespaceMetaData
+    type: object
+    properties:
+      clusterMeta:
+        $ref: '#/definitions/model.ClusterMeta'
+      env:
+        type: array
+        items:
+          $ref: '#/definitions/v1.EnvVar'
+      imagePullSecrets:
+        type: array
+        items:
+          $ref: '#/definitions/v1.LocalObjectReference'
+      ingressAnnotations:
+        additionalProperties:
+          type: string
+      serviceAnnotations:
+        additionalProperties:
+          type: string
+  model.NamespaceMigration:
+    title: NamespaceMigration
+    type: object
+    properties:
+      sourceId:
+        type: integer
+        format: int64
+      targetId:
+        type: integer
+        format: int64
+  model.NamespaceUser:
+    title: NamespaceUser
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      group:
+        $ref: '#/definitions/model.Group'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/model.Group'
+      groupsName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      namespace:
+        $ref: '#/definitions/model.Namespace'
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        $ref: '#/definitions/model.User'
+  model.Permission:
+    title: Permission
+    type: object
+    properties:
+      comment:
+        type: string
+      createTime:
+        type: string
+        format: datetime
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/model.Group'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+  model.PersistentVolumeClaim:
+    title: PersistentVolumeClaim
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.PersistentVolumeClaimTemplate:
+    title: PersistentVolumeClaimTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      persistentVolumeClaim:
+        $ref: '#/definitions/model.PersistentVolumeClaim'
+      persistentVolumeClaimId:
+        type: integer
+        format: int64
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.PublishHistory:
+    title: PublishHistory
+    type: object
+    properties:
+      cluster:
+        type: string
+      createTime:
+        type: string
+        format: datetime
+      id:
+        type: integer
+        format: int64
+      message:
+        type: string
+      resourceId:
+        type: integer
+        format: int64
+      resourceName:
+        type: string
+      status:
+        $ref: '#/definitions/model.ReleaseStatus'
+      templateId:
+        type: integer
+        format: int64
+      type:
+        $ref: '#/definitions/model.PublishType'
+      user:
+        type: string
+  model.PublishStatus:
+    title: PublishStatus
+    type: object
+    properties:
+      cluster:
+        type: string
+      id:
+        type: integer
+        format: int64
+      resourceId:
+        type: integer
+        format: int64
+      templateId:
+        type: integer
+        format: int64
+      type:
+        $ref: '#/definitions/model.PublishType'
+  model.PublishType:
+    title: PublishType
+    format: int32
+    type: integer
+  model.ReleaseStatus:
+    title: ReleaseStatus
+    format: int32
+    type: integer
+  model.ResourcesLimit:
+    title: ResourcesLimit
+    type: object
+    properties:
+      cpu:
+        type: integer
+        format: int64
+      memory:
+        type: integer
+        format: int64
+  model.Secret:
+    title: Secret
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.SecretTemplate:
+    title: SecretTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      secret:
+        $ref: '#/definitions/model.Secret'
+      secretId:
+        type: integer
+        format: int64
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.Statefulset:
+    title: Statefulset
+    type: object
+    properties:
+      app:
+        $ref: '#/definitions/model.App'
+      appId:
+        type: integer
+        format: int64
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      metaData:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+        format: int64
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.StatefulsetMetaData:
+    title: StatefulsetMetaData
+    type: object
+    properties:
+      affinity:
+        $ref: '#/definitions/kapi.Affinity'
+      privileged:
+        $ref: '#/definitions/130658.bool'
+      replicas:
+        additionalProperties:
+          type: integer
+          format: int32
+      resources:
+        additionalProperties:
+          type: string
+  model.StatefulsetTemplate:
+    title: StatefulsetTemplate
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      statefulset:
+        $ref: '#/definitions/model.Statefulset'
+      statefulsetId:
+        type: integer
+        format: int64
+      status:
+        type: array
+        items:
+          $ref: '#/definitions/model.PublishStatus'
+      template:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      user:
+        type: string
+  model.TypeApp:
+    title: TypeApp
+    type: object
+  model.User:
+    title: User
+    type: object
+    properties:
+      admin:
+        type: boolean
+      comment:
+        type: string
+      createTime:
+        type: string
+        format: datetime
+      deleted:
+        type: boolean
+      display:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastIp:
+        type: string
+      lastLogin:
+        type: string
+        format: datetime
+      name:
+        type: string
+      namespaces:
+        type: array
+        items:
+          $ref: '#/definitions/model.Namespace'
+      type:
+        $ref: '#/definitions/model.UserType'
+      updateTime:
+        type: string
+        format: datetime
+  model.UserType:
+    title: UserType
+    format: int64
+    type: integer
+  model.WebHook:
+    title: WebHook
+    type: object
+    properties:
+      createTime:
+        type: string
+        format: datetime
+      enabled:
+        type: boolean
+      events:
+        type: string
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      objectId:
+        type: integer
+        format: int64
+      scope:
+        $ref: '#/definitions/model.WebHookScope'
+      secret:
+        type: string
+      updateTime:
+        type: string
+        format: datetime
+      url:
+        type: string
+      user:
+        type: string
+  model.WebHookScope:
+    title: WebHookScope
+    format: int64
+    type: integer
+  model.ingrTemplate:
+    title: ingrTemplate
+    type: object
+  model.ingressTemplate:
+    title: ingressTemplate
+    type: object
+  node.NodeStatistics:
+    title: NodeStatistics
+    type: object
+    properties:
+      details:
+        additionalProperties:
+          type: integer
+          format: int64
+      total:
+        type: integer
+        format: int64
+  response.NamesObject:
+    title: NamesObject
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  service.ServiceDetail:
+    title: ServiceDetail
+    type: object
+    properties:
+      clusterIP:
+        type: string
+      endpointList:
+        type: array
+        items:
+          $ref: '#/definitions/endpoint.Endpoint'
+      eventList:
+        type: array
+        items:
+          $ref: '#/definitions/common.Event'
+      externalEndpoints:
+        type: array
+        items:
+          $ref: '#/definitions/common.Endpoint'
+      internalEndpoint:
+        $ref: '#/definitions/common.Endpoint'
+      objectMeta:
+        $ref: '#/definitions/common.ObjectMeta'
+      podList:
+        type: array
+        items:
+          $ref: '#/definitions/v1.Pod'
+      selector:
+        additionalProperties:
+          type: string
+      sessionAffinity:
+        $ref: '#/definitions/v1.ServiceAffinity'
+      type:
+        $ref: '#/definitions/v1.ServiceType'
+      typeMeta:
+        $ref: '#/definitions/common.TypeMeta'
+  success:
+    title: success
+    type: object
+  v1.CephFSVolumeSource:
+    title: CephFSVolumeSource
+    type: object
+  v1.EndpointPort:
+    title: EndpointPort
+    type: object
+  v1.EnvVar:
+    title: EnvVar
+    type: object
+  v1.LocalObjectReference:
+    title: LocalObjectReference
+    type: object
+  v1.Pod:
+    title: Pod
+    type: object
+  v1.RBDVolumeSource:
+    title: RBDVolumeSource
+    type: object
+  v1.ServiceAffinity:
+    title: ServiceAffinity
+    type: object
+  v1.ServiceType:
+    title: ServiceType
+    type: object
+  v1.Time:
+    title: Time
+    type: object
+tags:
+- name: apps/:appid([0-9]+)/users
+  description: |
+    操作AppUser相关资源
+- name: namespaces/:namespaceid([0-9]+)/apps
+  description: |
+    操作App相关资源
+- name: namespaces/:namespaceid([0-9]+)/users
+  description: |
+    操作NamespaceUser相关资源
+- name: namespaces/:namespaceid([0-9]+)/bills
+  description: |
+    操作 账单 相关资源
+- name: clusters
+  description: |
+    集群相关操作

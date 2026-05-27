@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whoami-ingress
+  labels:
+    wayne-app: whoami
+    app: whoami-ingress
+  annotations:
+    configuration.konghq.com: strip-config
+spec:
+  tls: []
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: devops-platform-api
+                port:
+                  number: 80
+            path: /whoami
+            pathType: Prefix
+      host: k8s-dev.yourdomain.com

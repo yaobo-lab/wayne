@@ -1,0 +1,28 @@
+version: '3'
+services:
+  k8s-backend:
+    container_name: wayne-k8sapi
+    image: xxx/wayne-k8sapi:1.0.0
+    privileged: true 
+    network_mode: "host"                               
+    command: /app/wayne-k8sapi
+    environment:
+      GOPATH: "/go"
+    volumes:
+    - /data/wayne/app-conf/app.conf:/app/conf/app.conf
+    - /etc/localtime:/etc/localtime
+    restart: always
+    ports:
+    - "4213:4213"
+  k8s-frontend:
+    container_name: wayne-web
+    image: xxx/wayne-web:1.0.0
+    privileged: true                                
+    network_mode: "host"            
+    volumes:
+    - /data/wayne/web-conf/web-config.js:/usr/local/openresty/nginx/html/config.js
+    - /data/wayne/web-conf/nginx-conf.conf:/etc/nginx/conf.d/default.conf
+    - /etc/localtime:/etc/localtime
+    restart: always
+    ports:
+    - "4212:4212"

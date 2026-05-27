@@ -1,0 +1,1 @@
+INSERT INTO `user`(`id`, `name`, `password`, `salt`, `email`, `display`, `comment`, `type`, `admin`, `last_login`, `last_ip`, `deleted`, `create_time`, `update_time`) VALUES (1, 'admin', 'xxx', 'AKnTdEWAH8', 'admin@gmail.com', '管理员', '', 0, 1, '2024-12-14 17:07:42', '10.0.1.244', 0, '2023-12-10 06:00:57', '2024-12-14 17:07:42');

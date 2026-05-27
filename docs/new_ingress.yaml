@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress               #写个资源，资源对象是Ingress，就由此Ingress资源对象定义的规则，来配置Ingress转发情况
+metadata:
+  name: ingress-host-bar    #名称随便写
+spec:
+  ingressClassName: nginx       #默认就写Nginx
+  rules:
+  - host: "bo.ff.com"           #服务的域名
+    http:
+      paths: 
+      - pathType: Prefix        #表示以前缀的方式进行匹配
+        path: "/"               #前缀必须有个"/"，才可以成功匹配
+        backend:
+          service:              #规定Ingress后端的Service
+            name: hello-bo      #后端Service的名称
+            port:  
+              number: 8000      #后端Service监听的端口
+  - host: "demo.bo.com"     #再写一个服务
+    http:
+      paths:
+      - pathType: Prefix    #表示以前缀的方式进行匹配
+        path: "/nginx"  # 这里前缀必须指明是"/nginx"，之后会把请求会转给下面的服务，下面的服务一定要能处理这个路径，不能处理就是404
+        backend:
+          service:        #同样规定后端的Service
+            name: nginx-bo 
+            port:
+              number: 8000
