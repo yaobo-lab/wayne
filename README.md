@@ -1,6 +1,6 @@
 # Wayne
 
-Wayne 是基于 [Qihoo360/wayne](https://github.com/Qihoo360/wayne) 维护升级的 Kubernetes 管理平台后端项目。原开源版本最高支持 Kubernetes v1.13.3，本项目对核心代码、依赖和资源接口进行了整理升级，当前 Kubernetes 相关依赖版本为 `v0.19.16`。
+Wayne 是基于 [Qihoo360/wayne](https://github.com/Qihoo360/wayne) 维护升级的 Kubernetes 管理平台后端项目。原开源版本最高支持 Kubernetes v1.13.3，本项目对核心代码、依赖和资源接口进行了整理升级，当前 Kubernetes 相关依赖版本为 `v0.19.16`。 本项目已在生产环境中使用，且稳定运行 超过5年
 
 ## 项目特性
 
